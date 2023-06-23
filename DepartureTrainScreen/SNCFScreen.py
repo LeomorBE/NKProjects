@@ -212,14 +212,12 @@ class keyWindow(QMainWindow):
 
    def verifKey(self):
       key = self.lineEdit.text()
-      response = threadSNCF.requestApiSNCB.requests.get("https://api.navitia.io/v1/coverage?key="+key)
+      response = threadSNCF.requestApiSNCF.requests.get("https://api.navitia.io/v1/coverage?key="+key)
       convertToJson = json.dumps(response.json(),sort_keys=True, indent=4)
       jsonDict = json.loads(convertToJson)
       if(jsonDict.get("message") is not None):
          self.instruction.setText("Wrong key, please enter a Valid API key.")
       else:
-         #with open('key','w') as file:
-         #   file.write(key)
          self.__encryptKeyMem(key)
          self.ex = MainWindow()
          self.hide()

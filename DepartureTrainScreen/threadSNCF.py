@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
-import requestApiSNCB
+import requestApiSNCF
 from time import sleep
 import queue
 
@@ -10,7 +10,7 @@ class SNCFDepartures(QObject):
 
     def __init__(self, testQueue,parent: None):
         super().__init__(parent)
-        self.sncf = requestApiSNCB.UseApiSNCB()
+        self.sncf = requestApiSNCF.UseApiSNCF()
         self.myQueue = testQueue
         
     def run(self):

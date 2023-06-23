@@ -5,11 +5,10 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
 
-class UseApiSNCB:
+class UseApiSNCF:
 
     def __init__(self):
         self.key = self.__myKey()
-        #self.key = key
         self.url = "https://api.sncf.com/v1"
 
     def __myKey(self)->str:
