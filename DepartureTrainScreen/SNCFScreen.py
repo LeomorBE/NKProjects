@@ -17,6 +17,9 @@ from os import path
 class MainWindow(QWidget):
    cityChangeSignal = pyqtSignal(str)
    def __init__(self):
+      """
+      Method constructor.
+      """
       super().__init__()
       self.resize(800,450)
       self.setWindowTitle("SNCF Display Departures")
@@ -66,6 +69,11 @@ class MainWindow(QWidget):
       self.run()
 
    def initLayout(self):
+      """
+      Method initLayout().\n
+      Initialise main Layout.
+      """
+
       self.listLabel = []
       self.listLines = []
       self.listImage = []
@@ -95,7 +103,13 @@ class MainWindow(QWidget):
          self.listLines[i].setMaximumWidth(800)
          self.widgetVLayout.layout().addWidget(self.listLines[i])
 
-   def getTypeTrainImagePath(self,train):
+   def getTypeTrainImagePath(self,train:str):
+      """
+      Method getTypeTrainImagePath().\n
+      Take as argument a string represent type of train.\n
+      Return a string represent path to png file.
+      """
+
       match train:
          case "TER":
             return "SNCF_logo/TER.png"
@@ -124,6 +138,11 @@ class MainWindow(QWidget):
 
 
    def updateScreen(self,listDepart):
+      """
+      Method updateScreen()
+      Update the screen with the list of departure train.\n
+      Take as argument a list of dictionnaries containing train informations.
+      """
       print("update screen")
       for j in range(len(self.listLines)):
          self.listLines[j].layout().removeWidget(self.listLabel[j])
@@ -147,6 +166,11 @@ class MainWindow(QWidget):
             self.listLines[j].layout().addWidget(self.listLabel[j])
 
    def run(self):
+      """
+      Method run().\n
+      Part of initialisation of application.
+      """
+
       self.thread = QThread()
       self.myQueue = queue.Queue()
       self.sncf = threadSNCF.SNCFDepartures(self.myQueue,None)
@@ -156,7 +180,13 @@ class MainWindow(QWidget):
       self.sncf.update.connect(self.updateScreen)
       self.cityChangeSignal.connect(self.sncf.changeCity)
       self.thread.start()
+
    def initMenu(self):
+      """
+      Method initMenu().\n
+      Part of initialisation of application.
+      """
+
       hMenu = QHBoxLayout()
       menuTrain = QMenu("Train")
       sncb = menuTrain.addAction("SNCB")
@@ -166,7 +196,12 @@ class MainWindow(QWidget):
       wMenu.setLayout(hMenu)
       self.vlayout.addWidget(wMenu)
 
-   def getListOfCity(self):
+   def getListOfCity(self)->list:
+      """
+      Method getListOfCity().\n
+      Get the list of different station in France with the liste-des-gares.json.\n
+      Return a list containing stations name.
+      """
       listCity = []
       with open("./liste-des-gares.json",'rt') as file:
          jsonFile = file.read()
@@ -175,7 +210,13 @@ class MainWindow(QWidget):
             listCity.append(element["libelle"])
          file.close
       return listCity
-   def getNumOfCity(self,city):
+   
+   def getNumOfCity(self,city:str):
+      """
+      Method getNumOfCity().\n
+      Compare stations with argument city.\n
+      Return a string containing uic code.
+      """
       with open("./liste-des-gares.json",'rt') as file:
          numCity = ""
          jsonFile = file.read()
@@ -188,12 +229,18 @@ class MainWindow(QWidget):
          return numCity
    
    def updateCity(self):
+      """
+      Method updateCity().\n
+      """
       if self.myQueue.empty():
          self.myQueue.put(self.getNumOfCity(self.cityAsk.text()))
 
 class keyWindow(QMainWindow):
    
    def __init__(self,parent = None):
+      """
+      Method constructor.
+      """
       super(keyWindow, self).__init__(parent)
       self.resize(300,200)
       self.setWindowTitle("API Key")
@@ -211,6 +258,9 @@ class keyWindow(QMainWindow):
       self.setCentralWidget(self.widgetCentral)
 
    def verifKey(self):
+      """
+      Method verifKey()\n
+      """
       key = self.lineEdit.text()
       response = threadSNCF.requestApiSNCF.requests.get("https://api.navitia.io/v1/coverage?key="+key)
       convertToJson = json.dumps(response.json(),sort_keys=True, indent=4)
@@ -224,6 +274,9 @@ class keyWindow(QMainWindow):
          self.ex.show()
          
    def __encryptKeyMem(self, keyAPI:str):
+      """
+      Method __encryptKeyMem().\n
+      """
       key = b'R\x0f|\x89\xf5\x9a\xb3\xa7#\xcf\x91\xeas\xd7\xb9p'
       cipher = AES.new(key, AES.MODE_EAX)
       ciphertext, tag = cipher.encrypt_and_digest(keyAPI.encode())
