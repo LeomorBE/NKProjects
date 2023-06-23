@@ -1,21 +1,28 @@
 import sys
+import typing
+from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget
 import threadSNCF
 from datetime import datetime
 import json
 import queue
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from os import path
 
 
 class MainWindow(QWidget):
    cityChangeSignal = pyqtSignal(str)
-   def __init__(self, parent = None):
-      super(MainWindow, self).__init__(parent)
+   def __init__(self):
+      super().__init__()
       self.resize(800,450)
       self.setWindowTitle("SNCF Display Departures")
       hLayout = QHBoxLayout()
       self.vLayout = QVBoxLayout()
+      self.setWindowIcon(QIcon('clock.png'))
 
       toolBar = QToolBar()
       toolBar.setContentsMargins(0,0,0,0)
@@ -36,6 +43,7 @@ class MainWindow(QWidget):
       completer.setCaseSensitivity(Qt.CaseInsensitive)
       self.cityAsk.setCompleter(completer)
       self.cityAsk.editingFinished.connect(self.updateCity)
+      self.cityAsk.returnPressed.connect(self.updateCity)
 
       toolBar.addWidget(menu1)
       toolBar.addWidget(self.cityAsk)
@@ -160,7 +168,7 @@ class MainWindow(QWidget):
 
    def getListOfCity(self):
       listCity = []
-      with open("liste-des-gares.json",'rt') as file:
+      with open("./liste-des-gares.json",'rt') as file:
          jsonFile = file.read()
          jsonDict = json.loads(jsonFile)
          for element in jsonDict:
@@ -168,7 +176,7 @@ class MainWindow(QWidget):
          file.close
       return listCity
    def getNumOfCity(self,city):
-      with open("liste-des-gares.json",'rt') as file:
+      with open("./liste-des-gares.json",'rt') as file:
          numCity = ""
          jsonFile = file.read()
          jsonDict = json.loads(jsonFile)
@@ -183,10 +191,60 @@ class MainWindow(QWidget):
       if self.myQueue.empty():
          self.myQueue.put(self.getNumOfCity(self.cityAsk.text()))
 
+class keyWindow(QMainWindow):
+   
+   def __init__(self,parent = None):
+      super(keyWindow, self).__init__(parent)
+      self.resize(300,200)
+      self.setWindowTitle("API Key")
+      self.setWindowIcon(QIcon('clock.png'))
+      self.vLayout = QVBoxLayout()
+      self.instruction = QLabel("Please enter your API Key.")
+      self.lineEdit = QLineEdit()
+      self.button = QPushButton("Confirm")
+      self.button.pressed.connect(self.verifKey)
+      self.vLayout.addWidget(self.instruction)
+      self.vLayout.addWidget(self.lineEdit)
+      self.vLayout.addWidget(self.button)
+      self.widgetCentral = QWidget()
+      self.widgetCentral.setLayout(self.vLayout)
+      self.setCentralWidget(self.widgetCentral)
+
+   def verifKey(self):
+      key = self.lineEdit.text()
+      response = threadSNCF.requestApiSNCB.requests.get("https://api.navitia.io/v1/coverage?key="+key)
+      convertToJson = json.dumps(response.json(),sort_keys=True, indent=4)
+      jsonDict = json.loads(convertToJson)
+      if(jsonDict.get("message") is not None):
+         self.instruction.setText("Wrong key, please enter a Valid API key.")
+      else:
+         #with open('key','w') as file:
+         #   file.write(key)
+         self.__encryptKeyMem(key)
+         self.ex = MainWindow()
+         self.hide()
+         self.ex.show()
+         
+   def __encryptKeyMem(self, keyAPI:str):
+      key = b'R\x0f|\x89\xf5\x9a\xb3\xa7#\xcf\x91\xeas\xd7\xb9p'
+      cipher = AES.new(key, AES.MODE_EAX)
+      ciphertext, tag = cipher.encrypt_and_digest(keyAPI.encode())
+      file = open("key", "wb")
+      [ file.write(x) for x in (cipher.nonce, tag, ciphertext) ]
+      file.close()
+
 def main():
    app = QApplication(sys.argv)
-   ex = MainWindow()
-   ex.show()
+   try:
+      if path.isfile("key"):
+         print("here")
+         ex = MainWindow()
+      else:
+         print("here2")
+         ex =  keyWindow()
+      ex.show()
+   except ConnectionError as e:
+      print("No connection")
    sys.exit(app.exec_())
 if __name__ == '__main__':
    main()

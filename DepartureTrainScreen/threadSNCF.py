@@ -5,11 +5,12 @@ import queue
 
 class SNCFDepartures(QObject):
     update = pyqtSignal(list)
-    sncf = requestApiSNCB.UseApiSNCB("key") #remplacez key par la clé API de la SNCF
+    
     gare = "87141002"
 
     def __init__(self, testQueue,parent: None):
         super().__init__(parent)
+        self.sncf = requestApiSNCB.UseApiSNCB()
         self.myQueue = testQueue
         
     def run(self):
