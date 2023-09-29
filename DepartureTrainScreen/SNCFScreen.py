@@ -16,6 +16,7 @@ from os import path
 
 class MainWindow(QWidget):
    cityChangeSignal = pyqtSignal(str)
+   windowChange = pyqtSignal(int)
    def __init__(self):
       """
       Method constructor.
@@ -66,7 +67,7 @@ class MainWindow(QWidget):
       hLayout.setSpacing(0)
       self.initLayout()
       self.setLayout(hLayout)
-      self.run()
+      #self.run()
 
    def initLayout(self):
       """
@@ -235,13 +236,14 @@ class MainWindow(QWidget):
       if self.myQueue.empty():
          self.myQueue.put(self.getNumOfCity(self.cityAsk.text()))
 
-class keyWindow(QMainWindow):
+class KeyWindow(QWidget):
+   windowChange = pyqtSignal(int)
    
    def __init__(self,parent = None):
       """
       Method constructor.
       """
-      super(keyWindow, self).__init__(parent)
+      super().__init__()
       self.resize(300,200)
       self.setWindowTitle("API Key")
       self.setWindowIcon(QIcon('clock.png'))
@@ -253,9 +255,10 @@ class keyWindow(QMainWindow):
       self.vLayout.addWidget(self.instruction)
       self.vLayout.addWidget(self.lineEdit)
       self.vLayout.addWidget(self.button)
-      self.widgetCentral = QWidget()
-      self.widgetCentral.setLayout(self.vLayout)
-      self.setCentralWidget(self.widgetCentral)
+      self.setLayout(self.vLayout)
+      #self.widgetCentral = QWidget()
+      #self.widgetCentral.setLayout(self.vLayout)
+      #self.setCentralWidget(self.widgetCentral)
 
    def verifKey(self):
       """
@@ -269,9 +272,13 @@ class keyWindow(QMainWindow):
          self.instruction.setText("Wrong key, please enter a Valid API key.")
       else:
          self.__encryptKeyMem(key)
-         self.ex = MainWindow()
-         self.hide()
-         self.ex.show()
+         print("emit 1")
+         self.windowChange.emit(1)
+         #self.ex = MainWindow()
+         #self.hide()
+         #self.ex.show()
+      
+
          
    def __encryptKeyMem(self, keyAPI:str):
       """
@@ -292,7 +299,7 @@ def main():
          ex = MainWindow()
       else:
          print("here2")
-         ex =  keyWindow()
+         ex =  KeyWindow()
       ex.show()
    except ConnectionError as e:
       print("No connection")

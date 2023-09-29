@@ -15,6 +15,7 @@ class SNCFDepartures(QObject):
         self.sncf = requestApiSNCF.UseApiSNCF()
         self.myQueue = testQueue
         
+        
     def run(self):
         """
         Method run().\n
