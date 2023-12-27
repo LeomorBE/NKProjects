@@ -9,8 +9,8 @@ import threadSNCF
 from datetime import datetime
 import json
 import queue
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
+from Cryptodome.Cipher import AES
+from Cryptodome.Random import get_random_bytes
 from os import path
 
 
