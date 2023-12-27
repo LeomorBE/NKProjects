@@ -1,10 +1,10 @@
 import requests
 import json
 from datetime import datetime, date
-#from Cryptodome.Cipher import AES
-#from Cryptodome.Random import get_random_bytes
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
+from Cryptodome.Cipher import AES	#only for pycryptodomex
+from Cryptodome.Random import get_random_bytes	#only for pycryptodomex
+#from Crypto.Cipher import AES
+#from Crypto.Random import get_random_bytes
 
 
 class UseApiSNCF:
