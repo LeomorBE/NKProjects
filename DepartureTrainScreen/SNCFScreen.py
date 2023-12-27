@@ -11,8 +11,8 @@ import json
 import queue
 from Cryptodome.Cipher import AES	#only for pycryptodomex
 from Cryptodome.Random import get_random_bytes	#only for pycryptodomex
-#from Crypto.Cipher import AES
-#from Crypto.Random import get_random_bytes
+#from Crypto.Cipher import AES   #only for pycryptodome
+#from Crypto.Random import get_random_bytes  #only for pycryptodome
 from os import path
 
 
