@@ -23,22 +23,17 @@ class SNCFDepartures(QObject):
         each 30second, he updates trains departure and send signal to updatedScreen().
         """
         i = 0
+        cityChanged = False
         while True:
-            if i ==0 or not self.myQueue.empty():
-                station = self.myQueue.get()
-                print(station)
-                self.update.emit(self.sncf.getInfoArrival(station))            
+            print(i)
+            if(not self.myQueue.empty()):
+                self.gare = self.myQueue.get()
+                cityChanged = True
+            if i ==0 or cityChanged:
+                self.update.emit(self.sncf.getInfoArrival(self.gare))  
+                cityChanged = False  
                 i = 30
             else:
                 i -=1
                 sleep(1)
-            
-    def changeCity(self,city:str):
-        """
-        Method changeCity(), slot of cityChangeSignal() signal.\n
-        A setter.
-        """
-        print("changed")
-        self.gare = city
-        
         

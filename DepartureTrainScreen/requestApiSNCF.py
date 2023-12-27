@@ -1,8 +1,10 @@
 import requests
 import json
 from datetime import datetime, date
-from Cryptodome.Cipher import AES
-from Cryptodome.Random import get_random_bytes
+#from Cryptodome.Cipher import AES
+#from Cryptodome.Random import get_random_bytes
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
 
 
 class UseApiSNCF:
@@ -23,11 +25,9 @@ class UseApiSNCF:
         file_in = open("key", "rb")
         nonce, tag, ciphertext = [ file_in.read(x) for x in (16, 16, -1) ]
         file_in.close()
-
         key = b'R\x0f|\x89\xf5\x9a\xb3\xa7#\xcf\x91\xeas\xd7\xb9p'
         cipher = AES.new(key, AES.MODE_EAX, nonce)
         data = cipher.decrypt_and_verify(ciphertext, tag)
-        
         keyAPI = data.decode()
         return keyAPI
 

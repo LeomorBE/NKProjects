@@ -9,14 +9,16 @@ import threadSNCF
 from datetime import datetime
 import json
 import queue
-from Cryptodome.Cipher import AES
-from Cryptodome.Random import get_random_bytes
+#from Cryptodome.Cipher import AES
+#from Cryptodome.Random import get_random_bytes
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
 from os import path
 
 
 class MainWindow(QWidget):
-   cityChangeSignal = pyqtSignal(str)
    windowChange = pyqtSignal(int)
+
    def __init__(self):
       """
       Method constructor.
@@ -136,6 +138,7 @@ class MainWindow(QWidget):
             return "SNCF_logo/TGV_Ouigo.png"
          case _:
             print("error")
+            return "SNCF_logo/LOGO_SNCF_GROUPE_RVB_resize.png"
 
 
    def updateScreen(self,listDepart):
@@ -179,7 +182,6 @@ class MainWindow(QWidget):
       self.sncf.moveToThread(self.thread)
       self.thread.started.connect(self.sncf.run)
       self.sncf.update.connect(self.updateScreen)
-      self.cityChangeSignal.connect(self.sncf.changeCity)
       self.thread.start()
 
    def initMenu(self):
@@ -256,9 +258,6 @@ class KeyWindow(QWidget):
       self.vLayout.addWidget(self.lineEdit)
       self.vLayout.addWidget(self.button)
       self.setLayout(self.vLayout)
-      #self.widgetCentral = QWidget()
-      #self.widgetCentral.setLayout(self.vLayout)
-      #self.setCentralWidget(self.widgetCentral)
 
    def verifKey(self):
       """
@@ -272,13 +271,7 @@ class KeyWindow(QWidget):
          self.instruction.setText("Wrong key, please enter a Valid API key.")
       else:
          self.__encryptKeyMem(key)
-         print("emit 1")
          self.windowChange.emit(1)
-         #self.ex = MainWindow()
-         #self.hide()
-         #self.ex.show()
-      
-
          
    def __encryptKeyMem(self, keyAPI:str):
       """
@@ -290,19 +283,3 @@ class KeyWindow(QWidget):
       file = open("key", "wb")
       [ file.write(x) for x in (cipher.nonce, tag, ciphertext) ]
       file.close()
-
-def main():
-   app = QApplication(sys.argv)
-   try:
-      if path.isfile("key"):
-         print("here")
-         ex = MainWindow()
-      else:
-         print("here2")
-         ex =  KeyWindow()
-      ex.show()
-   except ConnectionError as e:
-      print("No connection")
-   sys.exit(app.exec_())
-if __name__ == '__main__':
-   main()
