@@ -4,3 +4,5 @@ echo "init config"
 
 export QT_DEBUG_PLUGINS=1
 export QT_QPA_PLATFORM=eglfs
+
+python3 Controller.py
