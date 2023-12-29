@@ -18,6 +18,16 @@ Pour pouvoir l'utiliser, vous devez être en possession d'une clé API fourni pa
 Utilisation de l'iso Rasbian Bookworm recommendé (ou bien nécessite Python3.10 minimum).
 Avec Bookworm il faudra utiliser `apt-get install python-pycryptodome` qui installera une ancienne version (dans le code il faudra utiliser Cryptodome au lien de Crypto).
 
+`sudo apt-get install build-essential`
+`sudo apt-get install python3-pyqt5`
+`sudo apt-get install pyqt5-dev pyqt5-dev-tools`
+`sudo apt-get install build-essential`
+`sudo apt-get install qt5-qmake`
+`sudo apt-get install qtcreate`
+`sudo apt-get install qtbase5-examples`
+`sudo apt-get install libfontconfig1-dev libdbus-1-dev libfreetype6-dev libicu-dev libudev-dev libinput-dev libxkbcommon-dev libssl-dev libpng-dev libjpeg-dev libglib2.0-dev libraspberrypi-dev`
+`sudo apt-get install bluez libbluetooth-dev`
+`sudo apt-get install --reinstall libxcb-xinerama0`
 
 ## Author
 *Mora Leonardo Rafael*
